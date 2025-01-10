@@ -7,6 +7,16 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
   },
+  devServer: {
+    static: {
+      directory: path.resolve(__dirname, 'dist'),
+    },
+    port: 3002,
+    open: true,
+    hot: true,
+    compress: true,
+    historyApiFallback: true,
+  },
   resolve: {
     extensions: ['.tsx', '.ts', '.jsx', '.js']
   },
@@ -16,7 +26,12 @@ module.exports = {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
         use: 'babel-loader'
-      }
+      },
+      {
+        test: /\.css$/i,
+        include: path.resolve(__dirname, 'src'),
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
+      },
     ]
   },
   plugins: [
