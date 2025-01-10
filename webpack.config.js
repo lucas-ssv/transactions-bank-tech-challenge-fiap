@@ -32,6 +32,13 @@ module.exports = {
         include: path.resolve(__dirname, 'src'),
         use: ['style-loader', 'css-loader', 'postcss-loader'],
       },
+      {
+        test: /\.svg$/,
+        use: [
+          '@svgr/webpack',
+          'url-loader'
+        ]
+      }
     ]
   },
   plugins: [
