@@ -1,18 +1,46 @@
 import close from "../assets/close-black.svg";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { formatToReais, inputFormatedToReais } from "../utils/format";
 import { depositos } from "../dtos/Deposito";
+
+export interface TransactionData {
+  typeTransaction: string;
+  valueTransaction: number;
+  date: string;
+}
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   deposito: depositos;
+  onUpdateTransaction: (
+    transactionId: string,
+    transaction: TransactionData
+  ) => Promise<void>;
 }
 
-export function ModalDeposito({ isOpen, onClose, deposito }: Props) {
+export function ModalDeposito({
+  isOpen,
+  onClose,
+  deposito,
+  onUpdateTransaction,
+}: Props) {
   const [typeTransaction, setTypeTransaction] = useState(deposito.label);
   const [date, setDate] = useState(deposito.data);
   const [value, setValue] = useState(deposito.valor);
+
+  const handleUpdateTransaction = async (event: FormEvent) => {
+    event.preventDefault();
+    const transactionData: TransactionData = {
+      typeTransaction,
+      date,
+      valueTransaction: value,
+    };
+
+    await onUpdateTransaction(deposito.id, transactionData).then(() =>
+      onClose()
+    );
+  };
 
   if (!isOpen) return null;
 
@@ -32,7 +60,7 @@ export function ModalDeposito({ isOpen, onClose, deposito }: Props) {
         </button>
         <div>
           <h2 className="text-xl font-bold">Editar transação</h2>
-          <form className="grid gap-2 mt-4" onSubmit={() => {}}>
+          <form className="grid gap-2 mt-4" onSubmit={handleUpdateTransaction}>
             <select
               name="tipo"
               id="tipo"

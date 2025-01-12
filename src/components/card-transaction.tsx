@@ -2,15 +2,24 @@ import { formatDate, formatToReais } from "../utils/format";
 import { useState } from "react";
 import lapis from "../assets/lapis.svg";
 import lixeira from "../assets/lixeira.svg";
-import { ModalDeposito } from "./modal-deposito";
+import { ModalDeposito, TransactionData } from "./modal-deposito";
 import { depositos } from "../dtos/Deposito";
 import BoxInside from "../ui/BoxInside";
 
 type Props = {
   depositos: depositos[];
+  onRemoveTransaction: (transactionId: string) => void;
+  onUpdateTransaction: (
+    transactionId: string,
+    transactionData: TransactionData
+  ) => Promise<void>;
 };
 
-export default function CardTransaction({ depositos }: Props) {
+export default function CardTransaction({
+  depositos,
+  onRemoveTransaction,
+  onUpdateTransaction,
+}: Props) {
   const [openModalId, setOpenModalId] = useState<string | null>(null);
 
   return (
@@ -30,6 +39,7 @@ export default function CardTransaction({ depositos }: Props) {
               isOpen={openModalId === deposito.id}
               onClose={() => setOpenModalId(null)}
               deposito={deposito}
+              onUpdateTransaction={onUpdateTransaction}
             />
             <div className="flex flex-1 flex-col">
               <small>Tipo</small>
@@ -56,7 +66,7 @@ export default function CardTransaction({ depositos }: Props) {
               <button
                 type="button"
                 className="bg-my-dark-green p-2 rounded-full cursor-pointer"
-                onClick={() => {}}
+                onClick={() => onRemoveTransaction(deposito.id)}
               >
                 <img src={lixeira} alt="" />
               </button>
