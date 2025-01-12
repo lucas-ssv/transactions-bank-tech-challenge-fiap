@@ -1,5 +1,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin")
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
 const path = require('node:path')
+const deps = require('./package.json').dependencies
 
 module.exports = {
   entry: './src/index.tsx',
@@ -42,6 +44,22 @@ module.exports = {
     ]
   },
   plugins: [
+    new ModuleFederationPlugin({
+      name: 'remoteApp',
+      library: { type: "var", name: "remoteApp" },
+      filename: 'remoteEntry.js',
+      exposes: {
+        "./CardTransaction": "./src/components/card-transaction.tsx",
+      },
+      shared: {
+        "react-dom": {
+          singleton: true,
+        },
+        react: {
+          singleton: true,
+        },
+      },
+    }),
     new HtmlWebpackPlugin({
       template: './index.html'
     })
