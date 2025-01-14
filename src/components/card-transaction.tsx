@@ -5,6 +5,9 @@ import lixeira from "../assets/lixeira.svg";
 import { ModalDeposito, TransactionData } from "./modal-deposito";
 import { depositos } from "../dtos/Deposito";
 import BoxInside from "../ui/BoxInside";
+import Cookies from "js-cookie";
+import { User } from "../dtos/User";
+import toast, { Toaster } from "react-hot-toast";
 
 type Props = {
   depositos: depositos[];
@@ -15,32 +18,55 @@ type Props = {
   ) => Promise<void>;
 };
 
+export type TransactionFilter = {
+  typeTransaction: string;
+  date: string;
+  minimumValue: string | number;
+  maximumValue: string | number;
+};
+
 export default function CardTransaction({
   depositos,
   onRemoveTransaction,
   onUpdateTransaction,
 }: Props) {
+  const storageUser = Cookies.get("user");
+  const user: User = storageUser ? JSON.parse(storageUser) : null;
+  const [transactions, setTransactions] = useState<depositos[]>(depositos);
   const [openModalId, setOpenModalId] = useState<string | null>(null);
+  const [isModalFilterOpen, setIsModalFilterOpen] = useState(false);
 
-  //scroll infinito
-  const [visibleCount, setVisibleCount] = useState(4); // Quantidade inicial de itens visíveis
+  const [visibleCount, setVisibleCount] = useState(4);
   const observerRef = useRef<HTMLDivElement | null>(null);
 
-  const visibleItems = depositos.slice(0, visibleCount);
+  const visibleItems = transactions.slice(0, visibleCount);
+
+  const handleTransactionsFilter = async (transaction: TransactionFilter) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3001/depositos?idUser=${user.id}&label=${transaction.typeTransaction}&data=${transaction.date}&valor_gte=${transaction.minimumValue}&valor_lte=${transaction.maximumValue}`
+      );
+      const data = await response.json();
+      setTransactions(data);
+    } catch (error) {
+      toast.error(error);
+    } finally {
+      setIsModalFilterOpen(false);
+    }
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
         if (entry.isIntersecting) {
-          // Incrementa mais x itens quando o último item visível entra na viewport
-          setVisibleCount((prev) => Math.min(prev + 4, depositos.length));
+          setVisibleCount((prev) => Math.min(prev + 4, transactions.length));
         }
       },
       {
-        root: null, // Usa o viewport padrão
-        rootMargin: "0px", // Gatilho ao estar completamente visível
-        threshold: 1.0, // 100% visível
+        root: null,
+        rootMargin: "0px",
+        threshold: 1.0,
       }
     );
 
@@ -53,12 +79,18 @@ export default function CardTransaction({
         observer.unobserve(observerRef.current);
       }
     };
-  }, [depositos]); // Reexecuta se `depositos` mudar
+  }, [transactions]);
 
   return (
-    <BoxInside title="Lista de transações">
+    <BoxInside
+      title="Lista de transações"
+      onModalFilter={setIsModalFilterOpen}
+      isModalFilterOpen={isModalFilterOpen}
+      onTransactionFilter={handleTransactionsFilter}
+      hasFilter
+    >
       <div className="flex flex-col gap-4">
-        {!depositos.length && (
+        {!transactions.length && (
           <h2 className="text-xl">
             Ainda <b>não há</b> registro de transações.
           </h2>
@@ -106,10 +138,11 @@ export default function CardTransaction({
             </div>
           </div>
         ))}
-        {visibleCount < depositos.length && (
+        {visibleCount < transactions.length && (
           <div ref={observerRef} className="h-36 bg-transparent"></div>
         )}
       </div>
+      <Toaster />
     </BoxInside>
   );
 }
