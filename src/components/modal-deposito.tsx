@@ -1,6 +1,10 @@
 import close from "../assets/close-black.svg";
 import { FormEvent, useState } from "react";
-import { formatToReais, inputFormatedToReais } from "../utils/format";
+import {
+  formatToNumber,
+  formatToReais,
+  inputFormatedToReais,
+} from "../utils/format";
 import { depositos } from "../dtos/Deposito";
 
 export interface TransactionData {
@@ -34,7 +38,7 @@ export function ModalDeposito({
     const transactionData: TransactionData = {
       typeTransaction,
       date,
-      valueTransaction: value,
+      valueTransaction: formatToNumber(String(value)),
     };
 
     await onUpdateTransaction(deposito.id, transactionData).then(() =>
