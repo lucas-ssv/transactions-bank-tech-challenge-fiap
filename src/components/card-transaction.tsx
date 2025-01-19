@@ -8,6 +8,7 @@ import BoxInside from "../ui/BoxInside";
 import Cookies from "js-cookie";
 import { User } from "../dtos/User";
 import toast, { Toaster } from "react-hot-toast";
+import "../styles/tailwind.css";
 
 type Props = {
   depositos: depositos[];
@@ -32,7 +33,7 @@ export default function CardTransaction({
 }: Props) {
   const storageUser = Cookies.get("user");
   const user: User = storageUser ? JSON.parse(storageUser) : null;
-  const [transactions, setTransactions] = useState<depositos[]>(depositos);
+  const [transactions, setTransactions] = useState<depositos[]>([]);
   const [openModalId, setOpenModalId] = useState<string | null>(null);
   const [isModalFilterOpen, setIsModalFilterOpen] = useState(false);
 
@@ -81,6 +82,10 @@ export default function CardTransaction({
     };
   }, [transactions]);
 
+  useEffect(() => {
+    setTransactions(depositos);
+  }, [depositos]);
+
   return (
     <BoxInside
       title="Lista de transações"
@@ -89,16 +94,16 @@ export default function CardTransaction({
       onTransactionFilter={handleTransactionsFilter}
       hasFilter
     >
-      <div className="flex flex-col gap-4">
+      <div className="remote-app-flex remote-app-flex-col remote-app-gap-4">
         {!transactions.length && (
-          <h2 className="text-xl">
+          <h2 className="remote-app-text-xl">
             Ainda <b>não há</b> registro de transações.
           </h2>
         )}
         {visibleItems.map((deposito) => (
           <div
             key={deposito.id}
-            className="flex md:grid grid-cols-4 flex-col md:flex-row justify-between md:items-center gap-2 bg-white py-2 px-4 rounded-lg"
+            className="remote-app-flex md:remote-app-grid remote-app-grid-cols-4 remote-app-flex-col md:remote-app-flex-row remote-app-justify-between md:remote-app-items-center remote-app-gap-2 remote-app-bg-white remote-app-py-2 remote-app-px-4 remote-app-rounded-lg"
           >
             <ModalDeposito
               isOpen={openModalId === deposito.id}
@@ -106,31 +111,31 @@ export default function CardTransaction({
               deposito={deposito}
               onUpdateTransaction={onUpdateTransaction}
             />
-            <div className="flex flex-1 flex-col">
+            <div className="remote-app-flex remote-app-flex-1 remote-app-flex-col">
               <small>Tipo</small>
-              <strong className="first-letter:capitalize">
+              <strong className="first-letter:remote-app-capitalize">
                 {deposito.label}
               </strong>
             </div>
-            <div className="flex flex-col">
+            <div className="remote-app-flex remote-app-flex-col">
               <small>Valor</small>
               <strong>{formatToReais(deposito.valor)}</strong>
             </div>
-            <div className="flex flex-col">
+            <div className="remote-app-flex remote-app-flex-col">
               <small>Data da transação</small>
               <strong>{formatDate(deposito.data)}</strong>
             </div>
-            <div className="flex justify-end gap-4">
+            <div className="remote-app-flex remote-app-justify-end remote-app-gap-2 remote-app-items-center">
               <button
                 type="button"
-                className="bg-my-dark-green p-2 rounded-full cursor-pointer"
+                className="remote-app-bg-my-dark-green remote-app-p-2 remote-app-rounded-full remote-app-cursor-pointer"
                 onClick={() => setOpenModalId(deposito.id)}
               >
                 <img src={lapis} alt="" />
               </button>
               <button
                 type="button"
-                className="bg-my-dark-green p-2 rounded-full cursor-pointer"
+                className="remote-app-bg-my-dark-green remote-app-p-2 remote-app-rounded-full remote-app-cursor-pointer"
                 onClick={() => onRemoveTransaction(deposito.id)}
               >
                 <img src={lixeira} alt="" />
@@ -139,7 +144,10 @@ export default function CardTransaction({
           </div>
         ))}
         {visibleCount < transactions.length && (
-          <div ref={observerRef} className="h-36 bg-transparent"></div>
+          <div
+            ref={observerRef}
+            className="remote-app-h-36 remote-app-bg-transparent"
+          ></div>
         )}
       </div>
       <Toaster />
