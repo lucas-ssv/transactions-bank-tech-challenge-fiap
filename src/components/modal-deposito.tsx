@@ -6,6 +6,7 @@ import {
   inputFormatedToReais,
 } from "../utils/format";
 import { depositos } from "../dtos/Deposito";
+import fileImage from "../assets/file.svg";
 
 export interface TransactionData {
   typeTransaction: string;
@@ -97,6 +98,40 @@ export function ModalDeposito({
               onChange={(e) => setValue(inputFormatedToReais(e))}
               className="py-3 w-full border-[1px] border-my-blue focus:border-my-green rounded-lg text-black text-center outline-none"
             />
+
+            {deposito?.documentsUrl?.map((documentUrl) => (
+              <div
+                key={documentUrl}
+                className="remote-app-grid remote-app-gap-2"
+              >
+                <label htmlFor="documents">Documentos relacionados</label>
+                <div className="remote-app-flex remote-app-items-center remote-app-gap-1 remote-app-border-2 remote-app-border-dashed remote-app-p-1 remote-app-rounded-md">
+                  {documentUrl.endsWith(".pdf") ? (
+                    <a
+                      href={documentUrl}
+                      title="Clique para visualizar o documento"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <img src={fileImage} alt="Ícone de arquivo PDF" />
+                    </a>
+                  ) : (
+                    <a
+                      href={documentUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <img
+                        src={documentUrl}
+                        title="Clique para visualizar o documento"
+                        className="remote-app-w-10 remote-app-h-10 remote-app-object-cover remote-app-rounded-sm"
+                        alt="Documento relacionado"
+                      />
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
 
             <button
               type="submit"
