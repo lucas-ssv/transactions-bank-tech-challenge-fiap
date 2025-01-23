@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
 const path = require('node:path')
-const deps = require('./package.json').dependencies
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   entry: './src/index.tsx',
@@ -62,6 +62,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       template: './index.html'
-    })
+    }),
+    new Dotenv()
   ]
 }

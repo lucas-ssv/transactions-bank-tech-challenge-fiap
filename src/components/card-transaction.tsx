@@ -45,7 +45,7 @@ export default function CardTransaction({
   const handleTransactionsFilter = async (transaction: TransactionFilter) => {
     try {
       const response = await fetch(
-        `http://localhost:3001/depositos?idUser=${user.id}&label=${transaction.typeTransaction}&data=${transaction.date}&valor_gte=${transaction.minimumValue}&valor_lte=${transaction.maximumValue}`
+        `${process.env.DB_JSON_SERVER_URL}/depositos?idUser=${user.id}&label=${transaction.typeTransaction}&data=${transaction.date}&valor_gte=${transaction.minimumValue}&valor_lte=${transaction.maximumValue}`
       );
       const data = await response.json();
       setTransactions(data);

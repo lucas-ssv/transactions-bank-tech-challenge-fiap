@@ -108,7 +108,7 @@ export function ModalDeposito({
                 <div className="remote-app-flex remote-app-items-center remote-app-gap-1 remote-app-border-2 remote-app-border-dashed remote-app-p-1 remote-app-rounded-md">
                   {documentUrl.endsWith(".pdf") ? (
                     <a
-                      href={documentUrl}
+                      href={`${process.env.API_URL}${documentUrl}`}
                       title="Clique para visualizar o documento"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -117,12 +117,12 @@ export function ModalDeposito({
                     </a>
                   ) : (
                     <a
-                      href={documentUrl}
+                      href={`${process.env.API_URL}${documentUrl}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       <img
-                        src={documentUrl}
+                        src={`${process.env.API_URL}${documentUrl}`}
                         title="Clique para visualizar o documento"
                         className="remote-app-w-10 remote-app-h-10 remote-app-object-cover remote-app-rounded-sm"
                         alt="Documento relacionado"
