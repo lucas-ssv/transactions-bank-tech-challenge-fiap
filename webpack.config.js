@@ -1,5 +1,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin")
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
 const path = require('node:path')
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   entry: './src/index.tsx',
@@ -32,11 +34,35 @@ module.exports = {
         include: path.resolve(__dirname, 'src'),
         use: ['style-loader', 'css-loader', 'postcss-loader'],
       },
+      {
+        test: /\.svg$/,
+        use: [
+          '@svgr/webpack',
+          'url-loader'
+        ]
+      }
     ]
   },
   plugins: [
+    new ModuleFederationPlugin({
+      name: 'remoteApp',
+      library: { type: "var", name: "remoteApp" },
+      filename: 'remoteEntry.js',
+      exposes: {
+        "./CardTransaction": "./src/components/card-transaction.tsx",
+      },
+      shared: {
+        "react-dom": {
+          singleton: true,
+        },
+        react: {
+          singleton: true,
+        },
+      },
+    }),
     new HtmlWebpackPlugin({
       template: './index.html'
-    })
+    }),
+    new Dotenv()
   ]
 }

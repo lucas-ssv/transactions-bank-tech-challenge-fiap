@@ -1,6 +1,7 @@
 import { Config } from "tailwindcss";
 
 const config: Config = {
+  prefix: "remote-app-",
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}", "./dist/*.html"],
   theme: {
     extend: {
